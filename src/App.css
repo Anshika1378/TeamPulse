@@ -5,33 +5,26 @@
   background: var(--bg);
 }
 
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  padding: 0 24px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  transform: translateZ(0); /* GPU acceleration */
-  box-shadow: var(--shadow-xs);
-}
-
 .app-body {
   display: flex;
   flex: 1;
   min-height: 0;
 }
 
+/* Sidebar wrapper */
+.sidebar-wrapper {
+  width: 240px;
+  flex-shrink: 0;
+}
+
+/* Main content */
 .main-content {
   flex: 1;
   padding: 28px 32px;
   overflow-y: auto;
   background: var(--bg);
   min-height: calc(100vh - 60px);
+  position: relative;
 }
 
 .dashboard-content {
@@ -39,6 +32,14 @@
   flex-direction: column;
   gap: 28px;
   max-width: 1200px;
+}
+
+/* Action Bar */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
 }
 
 .dashboard-content .action-bar button {
@@ -50,15 +51,70 @@
   font-weight: 500;
 }
 
-.action-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
+/* ========================= */
+/* 📱 Mobile Styles */
+/* ========================= */
+
+.mobile-menu-btn {
+  display: none;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  cursor: pointer;
 }
 
+/* Mobile Layout */
 @media (max-width: 768px) {
+
+  .app-body {
+    flex-direction: column;
+  }
+
+  .sidebar-wrapper {
+    position: fixed;
+    top: 60px;
+    left: -100%;
+    width: 240px;
+    height: calc(100% - 60px);
+    background: var(--surface);
+    transition: left 0.3s ease;
+    z-index: 200;
+  }
+
+  .sidebar-wrapper.open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 150;
+  }
+
   .main-content {
     padding: 16px;
+  }
+
+  .mobile-menu-btn {
+    display: inline-block;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+
+  .main-content {
+    padding: 12px;
+  }
+
+  .dashboard-content {
+    gap: 20px;
   }
 }

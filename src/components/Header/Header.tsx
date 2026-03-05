@@ -12,33 +12,41 @@ function computeGreeting(): string {
 }
 
 export const Header: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
-  const [query, setQuery] = useState<string | undefined>();
+  const [query, setQuery] = useState('');
   const [greeting, setGreeting] = useState('');
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchResults, setSearchResults] = useState<Member[]>([]);
-
- useEffect(() => {
-   setGreeting(computeGreeting());
- },[]);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   useEffect(() => {
-    if (!query) {
+    setGreeting(computeGreeting());
+  }, []);
+
+  // Debounced Search with cleanup
+  useEffect(() => {
+    if (!query.trim()) {
       setSearchResults([]);
       return;
     }
-    setTimeout(() => {
+
+    const timer = setTimeout(() => {
       searchMembers(query).then(results => {
         setSearchResults(results);
       });
     }, 300);
+
+    return () => clearTimeout(timer);
   }, [query]);
 
   return (
     <header className="header">
       <div className="header__left">
-        <h1 className="header__logo" onClick={() => onNavigate('dashboard')}>TeamPulse</h1>
+        <h1 className="header__logo" onClick={() => onNavigate('dashboard')}>
+          TeamPulse
+        </h1>
       </div>
-      <div className="header__center">
+
+      <div className={`header__center ${mobileSearchOpen ? 'header__center--open' : ''}`}>
         <div className="header__search-container">
           <input
             className="header__search"
@@ -47,6 +55,7 @@ export const Header: React.FC<{ onNavigate: (page: string) => void }> = ({ onNav
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+
           {searchResults.length > 0 && query && (
             <div className="header__search-results">
               {searchResults.map(m => (
@@ -59,15 +68,27 @@ export const Header: React.FC<{ onNavigate: (page: string) => void }> = ({ onNav
           )}
         </div>
       </div>
+
       <div className="header__right">
         <span className="header__greeting">{greeting}, John</span>
+
+        {/* Mobile Search Button */}
+        <button
+          className="header__mobile-search-btn"
+          onClick={() => setMobileSearchOpen(prev => !prev)}
+        >
+          🔍
+        </button>
+
         <button
           className="header__notification-btn"
           onClick={() => setShowNotifications(!showNotifications)}
         >
           🔔
         </button>
+
         {showNotifications && <NotificationDropdown />}
+
         <div className="header__avatar">JD</div>
       </div>
     </header>

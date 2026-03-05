@@ -14,6 +14,7 @@ type Page = 'dashboard' | 'activity';
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -23,7 +24,8 @@ const App: React.FC = () => {
       }
     };
     document.addEventListener('keydown', handleKey);
-  }, [currentPage]);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, []);
 
   return (
     <ThemeProvider>
@@ -31,20 +33,42 @@ const App: React.FC = () => {
         <ToastProvider>
           <div className="app-layout">
             <Header onNavigate={(page) => setCurrentPage(page as Page)} />
+
             <div className="app-body">
-              <Sidebar
-                currentPage={currentPage}
-                onNavigate={setCurrentPage}
-                onOpenSearch={() => setSearchOpen(true)}
-              />
+              <div className={`sidebar-wrapper ${sidebarOpen ? 'open' : ''}`}>
+                <Sidebar
+                  currentPage={currentPage}
+                  onNavigate={(page) => {
+                    setCurrentPage(page);
+                    setSidebarOpen(false);
+                  }}
+                  onOpenSearch={() => setSearchOpen(true)}
+                />
+              </div>
+
               <main className="main-content">
+                <button
+                  className="mobile-menu-btn"
+                  onClick={() => setSidebarOpen(true)}
+                >
+                  ☰
+                </button>
+
                 <div className="dashboard-content">
                   {currentPage === 'dashboard' && <Dashboard />}
                   {currentPage === 'activity' && <ActivityPage />}
                 </div>
               </main>
             </div>
+
             <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+
+            {sidebarOpen && (
+              <div
+                className="sidebar-overlay"
+                onClick={() => setSidebarOpen(false)}
+              />
+            )}
           </div>
         </ToastProvider>
       </FilterProvider>
