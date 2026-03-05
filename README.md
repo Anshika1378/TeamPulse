@@ -59,3 +59,16 @@ useEffect(() => {
   setGreeting(computeGreeting());
 }, []);
 
+## 🐞 Sidebar Radio Selection Delay Fix
+
+### Issue
+When selecting a status filter (Active, On Leave, Offline), the radio button did not visually update immediately.  
+Although filtering logic worked correctly, the radio selection UI appeared delayed.
+
+### Root Cause
+The radio inputs were fully controlled using:
+
+```tsx
+checked={filters.status === s.value}
+
+defaultChecked={filters.status === s.value}

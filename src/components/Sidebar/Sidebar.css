@@ -101,6 +101,7 @@
   width: 14px;
   height: 14px;
   cursor: pointer;
+  accent-color: #4f46e5;
 }
 
 .sidebar__status-dot {
